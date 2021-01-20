@@ -1,9 +1,19 @@
+#include <fstream>
+#include <ctime>
 #include <iostream>
 #include <SDL.h>
+#include <SDL2/SDL_image.h>
 
-/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+#include "functions.h"
+
+using namespace std;
 
 int main(int argc, char** argv) {
+	
+	Match25_INIT();
+	LoadMedia(); 
+	
+	
 	
 	
 	
