@@ -1,21 +1,22 @@
-#include <fstream>
-#include <ctime>
-#include <iostream>
-#include <SDL.h>
-#include <SDL2/SDL_image.h>
-
 #include "functions.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
 	
-	Match25_INIT();
-	LoadMedia(); 
-	
-	
-	
-	
+//	Login();                  //key in id
+	Match25_INIT();           //initialize the interface
+	LoadMedia();              //load images or sound effects
+	LoadData();               //load data
+	GenerateMap(1);           //randomly scatter the circles for phase 1
+	Play();                   //game control
+	ClearMap();               //delete all circles
+	GenerateMap(2);           //randomly scatter the circles for phase 2
+	Play();                   //game control
+	ClearMap();               //delete all circles
+	TheEnd();                 //end scene
+	UpdateData();             //write new data to data.txt
+	Match25_CLOSE();          //destroy all the SDL things
 	
 	return 0;
 }
