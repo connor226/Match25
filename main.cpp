@@ -1,4 +1,7 @@
+#ifndef INC_FUNCTIONS_H
+#define INC_FUNCTIONS_H
 #include "functions.h"
+#endif
 
 using namespace std;
 

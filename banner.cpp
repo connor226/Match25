@@ -3,7 +3,10 @@
 #include "banner.h"
 #endif
 
+#ifndef INC_FUNCTIONS_H
+#define INC_FUNCTIONS_H
 #include "functions.h"
+#endif
 
 const int DIGIT_WIDTH = 75;
 const int WRONG_WIDTH = 200;
