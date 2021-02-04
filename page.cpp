@@ -9,15 +9,16 @@
 #endif
 
 SDL_Texture *page, *cursor, *MIN, *SEC;
-SDL_Rect textbox, button, hint_rect[5];
+SDL_Rect textbox, cursor_rect, button, hint_rect[5];
 vector<SDL_Texture*> input_pic, end_hint[2];
 vector<SDL_Rect> input_rect, end_rect[2];
 
+bool set_alpha;
 int cursor_pos;
 
 const int TEXTBOX_WIDTH = 900;
 const int TEXTBOX_HEIGHT = 100;
-/*
+
 void Login(){
 	ToNextLevel = false;
 	tmp_surface = IMG_Load("img/start_page.png");
@@ -37,21 +38,43 @@ void Login(){
 	hint_rect[3].h = BANNER_HEIGHT;
 	hint_rect[3].x = 0;
 	hint_rect[3].y = SCREEN_HEIGHT - BANNER_HEIGHT;
+	for(int i = 0; i < 12; i++){
+		SDL_Rect tmp_rect;
+		tmp_rect.w = 75;
+		tmp_rect.h = TEXTBOX_HEIGHT;
+		tmp_rect.x = 150 + 75 * i;
+		tmp_rect.y = textbox.y;
+		input_rect.push_back(tmp_rect);
+	}
+	set_alpha = false;
 	while(!quit){
-		while(!SDL_PollEvent(&evt) != 0){
+		while(SDL_PollEvent(&evt) != 0){
 			if(evt.type == SDL_QUIT)  quit = true;
 			else  if(evt.type == SDL_MOUSEBUTTONDOWN){
 				SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
 				if(ButtonPressed(mouse_pos)){
-					SDL_SetTextureAlphaMod(text[12], 127);
+					set_alpha = true;
 				}
+				else  cout << "No Alpha\n";
 			}
 			else  if(evt.type == SDL_MOUSEBUTTONUP){
 				SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
-				SDL_SetTextureAlphaMod(text[12], 255);
-				if(ButtonPressed(mouse_pos)){
+				set_alpha = false;
+				if(ButtonPressed(mouse_pos) && name.size()){
 					ToNextLevel = true;
 				}
+			}
+			else  if(evt.type == SDL_TEXTINPUT){
+				string tmp_input = "";
+				for(int i = 0; i < cursor_pos; i++)  tmp_input += name[i];
+				if(name.size() < 12){
+					tmp_input += evt.text.text;
+				}
+				for(int i = cursor_pos; i < name.size(); i++)  tmp_input += name[i];
+				++ cursor_pos;
+				name = "";
+				name = tmp_input;
+				tmp_input = "";
 			}
 			else  if(evt.type == SDL_KEYDOWN){
 				switch(evt.key.keysym.sym){
@@ -72,29 +95,71 @@ void Login(){
 						break;
 					}
 					case SDLK_BACKSPACE:{
-						
+						if(cursor_pos > 0){
+							-- cursor_pos;
+							string tmp_input = "";
+							for(int i = 0; i < name.size(); i++){
+								if(i != cursor_pos){
+									tmp_input += name[i];
+								}
+							}
+							name = "";
+							name = tmp_input;
+							tmp_input = "";
+						}
 						break;
 					}
 					case SDLK_DELETE:{
-						
+						if(cursor_pos < input_pic.size()){
+							string tmp_input = "";
+							for(int i = 0; i < name.size(); i++){
+								if(i != cursor_pos){
+									tmp_input += name[i];
+								}
+							}
+							name = "";
+							name = tmp_input;
+							tmp_input = "";
+						}
 						break;
 					}
 				}
 			}
 		}
 		if(ToNextLevel)  break;
+		input_pic.clear();
+		for(int i = 0; i < name.size(); i++){
+			if(name[i] >= '0' && name[i] <= '9')  input_pic.push_back(text[name[i] - '0']);
+			if(name[i] == ' ')  input_pic.push_back(black);
+			if(name[i] >= 'a' && name[i] <= 'z')  input_pic.push_back(text[name[i] - 'a' + 13]);
+		}
+		cursor_rect.w = 2;
+		cursor_rect.h = 90;
+		cursor_rect.x = textbox.x + 75 * cursor_pos;
+		cursor_rect.y = textbox.y + (TEXTBOX_HEIGHT - cursor_rect.h) / 2;
+		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, page, NULL, NULL);
 		SDL_RenderCopy(renderer, black, NULL, &textbox);
 		SDL_RenderCopy(renderer, hint[3], NULL, &hint_rect[3]);
+		if(input_pic.empty() || set_alpha)  SDL_SetTextureAlphaMod(text[12], 127);
+		else  SDL_SetTextureAlphaMod(text[12], 255);
 		SDL_RenderCopy(renderer, text[12], NULL, &button);
+		for(int i = 0; i < input_pic.size(); i++){
+			SDL_RenderCopy(renderer, input_pic[i], NULL, &input_rect[i]);
+		}
+		SDL_RenderCopy(renderer, cursor, NULL, &cursor_rect);
+		SDL_RenderPresent(renderer);
 	}
+	input_pic.clear();
+	input_rect.clear();
 	SDL_DestroyTexture(page);
 	page = NULL;
 	SDL_DestroyTexture(cursor);
 	cursor = NULL;
 }
-*/
+
 void TheEnd(){
+	if(record.size() != 2)  return ;
 	tmp_surface = IMG_Load("img/end_page.png");
 	page = SDL_CreateTextureFromSurface(renderer, tmp_surface);
 	tmp_surface = IMG_Load("img/min.png");
@@ -143,7 +208,7 @@ void TheEnd(){
 	while(!quit){
 		while(SDL_PollEvent(&evt) != 0){
 			if(evt.type == SDL_QUIT)  quit = true;
-			else  if(evt.type == SDL_KEYDOWN && evt.key.keysym.sym == SDLK_ESCAPE)  quit = true;
+			else  if(evt.type == SDL_KEYDOWN)  quit = true;
 		}
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, page, NULL, NULL);

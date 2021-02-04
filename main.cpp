@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
 	Match25_INIT();           //initialize the interface
 	LoadMedia();              //load images or sound effects
 	LoadData();               //load data
-//	Login();                  //key in id
+	Login();                  //key in id
 	GenerateMap(1);           //randomly scatter the circles for phase 1
 	Play();                   //game control
 	ClearMap();               //delete all circles

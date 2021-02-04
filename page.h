@@ -5,10 +5,11 @@
 #endif
 
 extern SDL_Texture *page, *cursor, *MIN, *SEC;
-extern SDL_Rect textbox, button, hint_rect[5];
+extern SDL_Rect textbox, cursor_rect, button, hint_rect[5];
 extern vector<SDL_Texture*> input_pic, end_hint[2];
 extern vector<SDL_Rect> input_rect, end_rect[2];
 
+extern bool set_alpha;
 extern int cursor_pos;
 
 extern const int TEXTBOX_WIDTH;

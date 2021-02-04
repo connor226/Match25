@@ -34,6 +34,7 @@ class VAL{
 
 extern double start_time, end_time;
 extern int dataCNT, wrong_time;
+extern string name;
 extern vector<pair<double, int> > record;
 extern vector<VAL> data;
 

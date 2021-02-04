@@ -12,6 +12,7 @@ using namespace std;
 
 double start_time, end_time;
 int dataCNT, wrong_time;
+string name;
 vector<pair<double, int> > record;
 vector<VAL> data;
 
@@ -37,9 +38,9 @@ void LoadData(){
 
 void UpdateData(){
 	freopen("data.txt", "w", stdout);
-	if(!quit){
+	if(record.size() == 2){
 		dataCNT += 1;
-		data.push_back(make_VAL("test", record[0].first, record[0].second, record[1].first, record[1].second));
+		data.push_back(make_VAL(name, record[0].first, record[0].second, record[1].first, record[1].second));
 	}
 	cout << dataCNT << '\n';
 	for(auto i : data){
