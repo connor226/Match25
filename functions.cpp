@@ -11,7 +11,10 @@ using namespace std;
 
 SDL_Window *window;
 SDL_Renderer *renderer;
-SDL_Texture *background, *aim, *cross, *green, *blue, *black, *number[40], *text[15];
+SDL_Surface *tmp_surface;
+SDL_Texture *background, *aim, *cross, *green, *blue, *black, *number[40], *text[40], *hint[5];
+SDL_Event evt;
+SDL_Point mouse_pos;
 
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 700;
@@ -22,9 +25,11 @@ const int COLUMN_WIDTH = SCREEN_WIDTH / COLUMN;
 const int ROW_WIDTH = (SCREEN_HEIGHT - BANNER_HEIGHT) / ROW;
 const double OMEGA = 0.2;
 
-bool start, quit;
+bool start, quit, ToNextLevel;
 int CurrentCircle;
-double rotate_angle;
+double angle, rotate_angle;
+string path;
+vector<pair<int, int> > wrong_message;
 
 CIRCLE *circles[30];
 BANNER *banner;
@@ -53,22 +58,41 @@ void Match25_INIT(){
 }
 
 void LoadMedia(){
-	background = SDL_CreateTextureFromSurface(renderer, IMG_Load("img/art.png"));
-	aim = SDL_CreateTextureFromSurface(renderer, IMG_Load("img/aim.png"));
-	cross = SDL_CreateTextureFromSurface(renderer, IMG_Load("img/cross.png"));
-	green = SDL_CreateTextureFromSurface(renderer, IMG_Load("img/green.png"));
-	blue = SDL_CreateTextureFromSurface(renderer, IMG_Load("img/blue.png"));
-	black = SDL_CreateTextureFromSurface(renderer, IMG_Load("img/banner.png"));
+	tmp_surface = IMG_Load("img/art.png");
+	background = SDL_CreateTextureFromSurface(renderer, tmp_surface);
+	tmp_surface = IMG_Load("img/aim.png");
+	aim = SDL_CreateTextureFromSurface(renderer, tmp_surface);
+	tmp_surface = IMG_Load("img/cross.png");
+	cross = SDL_CreateTextureFromSurface(renderer, tmp_surface);
+	tmp_surface = IMG_Load("img/green.png");
+	green = SDL_CreateTextureFromSurface(renderer, tmp_surface);
+	tmp_surface = IMG_Load("img/blue.png");
+	blue = SDL_CreateTextureFromSurface(renderer, tmp_surface);
+	tmp_surface = IMG_Load("img/banner.png");
+	black = SDL_CreateTextureFromSurface(renderer, tmp_surface);
 	string prefix = "img/num", suffix = ".png";
 	for(int i = 0; i < 38; i++){
 		string path = prefix + i + suffix;
-		number[i] = SDL_CreateTextureFromSurface(renderer, IMG_Load(path.c_str()));
+		tmp_surface = IMG_Load(path.c_str());
+		number[i] = SDL_CreateTextureFromSurface(renderer, tmp_surface);
 	}
 	prefix = "img/text";
-	for(int i = 0; i < 13; i++){
-		string path = prefix + i + suffix;
-		text[i] = SDL_CreateTextureFromSurface(renderer, IMG_Load(path.c_str()));
+	for(int i = 0; i < 39; i++){
+		path = prefix + i + suffix;
+		tmp_surface = IMG_Load(path.c_str());
+		text[i] = SDL_CreateTextureFromSurface(renderer, tmp_surface);
 	}
+	prefix = "img/end_hint";
+	for(int i = 0; i < 4; i++){
+		if(i == 3)  tmp_surface = IMG_Load("img/login_hint.png");
+		else{
+			path = prefix + i + suffix;
+			tmp_surface = IMG_Load(path.c_str());
+		}
+		hint[i] = SDL_CreateTextureFromSurface(renderer, tmp_surface);
+	}
+	SDL_FreeSurface(tmp_surface);
+	tmp_surface = NULL;
 }
 
 void GenerateMap(int phase){
@@ -122,10 +146,8 @@ void Play(){
 	CurrentCircle = 1;
 	wrong_time = 0;
 	rotate_angle = 0;
-	vector<pair<int, int> > wrong_message;
+	wrong_message.clear();
 	while(!quit){
-		SDL_Event evt;
-		SDL_Point mouse_pos;
 		while(SDL_PollEvent(&evt) != 0){
 			if(evt.type == SDL_QUIT)  quit = true;
 			else  if(evt.type == SDL_KEYDOWN && evt.key.keysym.sym == SDLK_ESCAPE)  quit = true;
@@ -184,9 +206,7 @@ void Play(){
 		SDL_RenderPresent(renderer);
 	}
 	while(!quit){
-		SDL_Event evt;
-		SDL_Point mouse_pos;
-		bool ToNextLevel = false;
+		ToNextLevel = false;
 		while(SDL_PollEvent(&evt) != 0){
 			if(evt.type == SDL_QUIT)  quit = true;
 			else  if(evt.type == SDL_KEYDOWN && evt.key.keysym.sym == SDLK_ESCAPE)  quit = true;
@@ -220,7 +240,6 @@ void DrawLine(pair<int, int> A, pair<int, int> B, SDL_Texture *src){
 	if(A.X > B.X)  swap(A, B);
 	else  if(A.X == B.X && A.Y < B.Y)  swap(A, B);
 	int length = sqrt((A.X - B.X) * (A.X - B.X) + (A.Y - B.Y) * (A.Y - B.Y));
-	double angle;
 	if(A.X == B.X)  angle = 90;
 	else angle = atan2((A.Y - B.Y), (A.X - B.X)) * 180 / PI;
 	SDL_Rect quad;
@@ -231,10 +250,6 @@ void DrawLine(pair<int, int> A, pair<int, int> B, SDL_Texture *src){
 	SDL_Point P;
 	P.x = 0, P.y = 0;
 	SDL_RenderCopyEx(renderer, src, NULL, &quad, angle, &P, SDL_FLIP_NONE);
-}
-
-void TheEnd(){
-	
 }
 
 void Match25_CLOSE(){
@@ -254,9 +269,13 @@ void Match25_CLOSE(){
 		SDL_DestroyTexture(number[i]);
 		number[i] = NULL;
 	}
-	for(int i = 0; i < 13; i++){
+	for(int i = 0; i < 39; i++){
 		SDL_DestroyTexture(text[i]);
 		text[i] = NULL;
+	}
+	for(int i = 0; i < 4; i++){
+		SDL_DestroyTexture(hint[i]);
+		hint[i] = NULL;
 	}
 	SDL_DestroyRenderer(renderer);
 	renderer = NULL;

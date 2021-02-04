@@ -29,6 +29,11 @@
 #include "banner.h"
 #endif
 
+#ifndef INC_PAGE_H
+#define INC_PAGE_H
+#include "page.h"
+#endif
+
 #ifndef INC_VECTOR
 #define INC_VECTOR
 #include <vector>
@@ -40,7 +45,10 @@ using namespace std;
 
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
-extern SDL_Texture *background, *aim, *cross, *green, *blue, *black, *number[40], *text[15];
+extern SDL_Surface *tmp_surface;
+extern SDL_Texture *background, *aim, *cross, *green, *blue, *black, *number[40], *text[40], *hint[5];
+extern SDL_Event evt;
+extern SDL_Point mouse_pos;
 
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
@@ -51,9 +59,11 @@ extern const int COLUMN_WIDTH;
 extern const int ROW_WIDTH;
 extern const double OMEGA;
 
-extern bool start, quit;
+extern bool start, quit, ToNextLevel;
 extern int CurrentCircle;
-extern double rotate_angle;
+extern double angle, rotate_angle;
+extern string path;
+extern vector<pair<int, int> > wrong_message;
 
 extern CIRCLE *circles[30];
 extern BANNER *banner;
