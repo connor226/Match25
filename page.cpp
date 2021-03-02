@@ -64,7 +64,7 @@ void Login(){
 					ToNextLevel = true;
 				}
 			}
-			else  if(evt.type == SDL_TEXTINPUT){
+			else  if(evt.type == SDL_TEXTINPUT && name.size() < 12){
 				string tmp_input = "";
 				for(int i = 0; i < cursor_pos; i++)  tmp_input += name[i];
 				if(name.size() < 12){
