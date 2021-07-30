@@ -51,7 +51,7 @@ string operator + (const string &s, const int &n){
 void Match25_INIT(){
 	SDL_Init(SDL_INIT_EVERYTHING);
 	IMG_Init(IMG_INIT_PNG);
-	window = SDL_CreateWindow("Match25", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Match25", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_MAXIMIZED);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	quit = false;
@@ -142,6 +142,8 @@ void GenerateMap(int phase){
 }
 
 void Play(){
+	int ww, hh;
+	SDL_GetWindowSize(window, &ww, &hh);
 	start = false;
 	CurrentCircle = 1;
 	wrong_time = 0;
@@ -190,8 +192,8 @@ void Play(){
 		else{
 			SDL_Rect tmp_rect;
 			tmp_rect.w = tmp_rect.h = 125 + 25 * cos(rotate_angle * OMEGA);
-			tmp_rect.x = circles[1]->pos().X - (tmp_rect.w - CIRCLE_SIZE) / 2;
-			tmp_rect.y = circles[1]->pos().Y - (tmp_rect.h - CIRCLE_SIZE) / 2;
+			tmp_rect.x = (circles[1]->pos().X - (tmp_rect.w - CIRCLE_SIZE) / 2);
+			tmp_rect.y = (circles[1]->pos().Y - (tmp_rect.h - CIRCLE_SIZE) / 2);
 			SDL_RenderCopyEx(renderer, aim, NULL, &tmp_rect, rotate_angle, NULL, SDL_FLIP_NONE);
 			rotate_angle += OMEGA;
 		}

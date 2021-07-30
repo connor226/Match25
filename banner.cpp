@@ -13,40 +13,42 @@ const int WRONG_WIDTH = 200;
 const int BUTTON_WIDTH = 200;
 
 BANNER::BANNER(){
+	int ww, hh;
+	SDL_GetWindowSize(window, &ww, &hh);
 	timer_x = 0;
-	wrong_time_x = DIGIT_WIDTH * 6;
-	button_x = SCREEN_WIDTH - BUTTON_WIDTH;
+	wrong_time_x = DIGIT_WIDTH * 6 * ww / SCREEN_WIDTH;
+	button_x = (SCREEN_WIDTH - BUTTON_WIDTH) * ww / SCREEN_WIDTH;
 	background = black;
 	timer_pic[2] = text[10];
 	wrong_time_pic[0] = text[11];
 	wrong_time_pic[1] = text[10];
 	button_pic = text[12];
-	background_rect.w = SCREEN_WIDTH;
-	background_rect.h = BANNER_HEIGHT;
+	background_rect.w = SCREEN_WIDTH * ww / SCREEN_WIDTH;
+	background_rect.h = BANNER_HEIGHT * hh / SCREEN_HEIGHT;
 	background_rect.x = 0;
-	background_rect.y = SCREEN_HEIGHT - BANNER_HEIGHT;
+	background_rect.y = (SCREEN_HEIGHT - BANNER_HEIGHT) * hh / SCREEN_HEIGHT;
 	for(int i = 0; i < 6; i++){
-		timer_rect[i].w = DIGIT_WIDTH;
-		timer_rect[i].h = BANNER_HEIGHT;
-		timer_rect[i].x = DIGIT_WIDTH * i;
-		timer_rect[i].y = SCREEN_HEIGHT - BANNER_HEIGHT;
+		timer_rect[i].w = DIGIT_WIDTH * ww / SCREEN_WIDTH;
+		timer_rect[i].h = BANNER_HEIGHT * hh / SCREEN_HEIGHT;
+		timer_rect[i].x = DIGIT_WIDTH * i * ww / SCREEN_WIDTH;
+		timer_rect[i].y = (SCREEN_HEIGHT - BANNER_HEIGHT) * hh / SCREEN_HEIGHT;
 	}
 	for(int i = 0; i < 6; i++){
 		if(i == 0){
-			wrong_time_rect[i].w = WRONG_WIDTH;
-			wrong_time_rect[i].x = DIGIT_WIDTH * 6;
+			wrong_time_rect[i].w = WRONG_WIDTH * ww / SCREEN_WIDTH;
+			wrong_time_rect[i].x = DIGIT_WIDTH * 6 * ww / SCREEN_WIDTH;
 		}
 		else{
-			wrong_time_rect[i].w = DIGIT_WIDTH;
-			wrong_time_rect[i].x = WRONG_WIDTH + DIGIT_WIDTH * (i + 5);
+			wrong_time_rect[i].w = DIGIT_WIDTH * ww / SCREEN_WIDTH;
+			wrong_time_rect[i].x = (WRONG_WIDTH + DIGIT_WIDTH * (i + 5)) * ww / SCREEN_WIDTH;
 		}
-		wrong_time_rect[i].h = BANNER_HEIGHT;
-		wrong_time_rect[i].y = SCREEN_HEIGHT - BANNER_HEIGHT;
+		wrong_time_rect[i].h = BANNER_HEIGHT * hh / SCREEN_HEIGHT;
+		wrong_time_rect[i].y = (SCREEN_HEIGHT - BANNER_HEIGHT) * hh / SCREEN_HEIGHT;
 	}
-	button_rect.w = BUTTON_WIDTH;
-	button_rect.h = BANNER_HEIGHT;
-	button_rect.x = SCREEN_WIDTH - BUTTON_WIDTH;
-	button_rect.y = SCREEN_HEIGHT - BANNER_HEIGHT;
+	button_rect.w = BUTTON_WIDTH * ww / SCREEN_WIDTH;
+	button_rect.h = BANNER_HEIGHT * hh / SCREEN_HEIGHT;
+	button_rect.x = (SCREEN_WIDTH - BUTTON_WIDTH) * ww / SCREEN_WIDTH;
+	button_rect.y = (SCREEN_HEIGHT - BANNER_HEIGHT) * hh / SCREEN_HEIGHT;
 	SDL_SetTextureAlphaMod(button_pic, 127);
 }
 
@@ -88,5 +90,7 @@ void BANNER::update(){
 }
 
 bool ButtonPressed(SDL_Point p){
-	return (p.x > SCREEN_WIDTH - BUTTON_WIDTH && p.x < SCREEN_WIDTH && p.y > SCREEN_HEIGHT - BANNER_HEIGHT && p.y < SCREEN_HEIGHT);
+	int ww, hh;
+	SDL_GetWindowSize(window, &ww, &hh);
+	return (p.x > (SCREEN_WIDTH - BUTTON_WIDTH) * ww / SCREEN_WIDTH && p.x < ww && p.y > (SCREEN_HEIGHT - BANNER_HEIGHT) * hh / SCREEN_HEIGHT && p.y < hh);
 }

@@ -11,16 +11,20 @@ using namespace std;
 const int CIRCLE_SIZE = 100;
 
 CIRCLE::CIRCLE(int num){
+	int ww, hh;
+	SDL_GetWindowSize(window, &ww, &hh);
 	pic = number[num];
-	quad.w = CIRCLE_SIZE;
-	quad.h = CIRCLE_SIZE;
+	quad.w = CIRCLE_SIZE * min(ww / SCREEN_WIDTH, hh / SCREEN_HEIGHT);
+	quad.h = CIRCLE_SIZE * min(ww / SCREEN_WIDTH, hh / SCREEN_HEIGHT);
 	quad.x = -CIRCLE_SIZE;
 	quad.y = -CIRCLE_SIZE;
 }
 
 void CIRCLE::SetPos(int X, int Y){
-	quad.x = X;
-	quad.y = Y;
+	int ww, hh;
+	SDL_GetWindowSize(window, &ww, &hh);
+	quad.x = X * ww / SCREEN_WIDTH;
+	quad.y = Y * hh / SCREEN_HEIGHT;
 }
 
 pair<int, int> CIRCLE::pos(){

@@ -20,29 +20,31 @@ const int TEXTBOX_WIDTH = 900;
 const int TEXTBOX_HEIGHT = 100;
 
 void Login(){
+	int ww, hh;
+	SDL_GetWindowSize(window, &ww, &hh);
 	ToNextLevel = false;
 	tmp_surface = IMG_Load("img/start_page.png");
 	page = SDL_CreateTextureFromSurface(renderer, tmp_surface);
 	tmp_surface = IMG_Load("img/pos.png");
 	cursor = SDL_CreateTextureFromSurface(renderer, tmp_surface);
 	SDL_FreeSurface(tmp_surface);
-	textbox.w = TEXTBOX_WIDTH;
-	textbox.h = TEXTBOX_HEIGHT;
-	textbox.x = (SCREEN_WIDTH - TEXTBOX_WIDTH) / 2;;
-	textbox.y = (SCREEN_HEIGHT - TEXTBOX_HEIGHT) / 2;
-	button.w = BUTTON_WIDTH;
-	button.h = BANNER_HEIGHT;
-	button.x = SCREEN_WIDTH - BUTTON_WIDTH;
-	button.y = SCREEN_HEIGHT - BANNER_HEIGHT;
-	hint_rect[3].w = SCREEN_WIDTH;
-	hint_rect[3].h = BANNER_HEIGHT;
+	textbox.w = TEXTBOX_WIDTH * ww / SCREEN_WIDTH;
+	textbox.h = TEXTBOX_HEIGHT * hh / SCREEN_HEIGHT;
+	textbox.x = (SCREEN_WIDTH - TEXTBOX_WIDTH) / 2 * ww / SCREEN_WIDTH;
+	textbox.y = (SCREEN_HEIGHT - TEXTBOX_HEIGHT) / 2 * hh / SCREEN_HEIGHT;
+	button.w = BUTTON_WIDTH * ww / SCREEN_WIDTH;
+	button.h = BANNER_HEIGHT * hh / SCREEN_HEIGHT;
+	button.x = (SCREEN_WIDTH - BUTTON_WIDTH) * ww / SCREEN_WIDTH;
+	button.y = (SCREEN_HEIGHT - BANNER_HEIGHT) * hh / SCREEN_HEIGHT;
+	hint_rect[3].w = SCREEN_WIDTH * ww / SCREEN_WIDTH;
+	hint_rect[3].h = BANNER_HEIGHT * hh / SCREEN_HEIGHT;
 	hint_rect[3].x = 0;
-	hint_rect[3].y = SCREEN_HEIGHT - BANNER_HEIGHT;
+	hint_rect[3].y = (SCREEN_HEIGHT - BANNER_HEIGHT) * hh / SCREEN_HEIGHT;
 	for(int i = 0; i < 12; i++){
 		SDL_Rect tmp_rect;
-		tmp_rect.w = 75;
-		tmp_rect.h = TEXTBOX_HEIGHT;
-		tmp_rect.x = 150 + 75 * i;
+		tmp_rect.w = 75 * ww / SCREEN_WIDTH;
+		tmp_rect.h = TEXTBOX_HEIGHT * hh / SCREEN_HEIGHT;
+		tmp_rect.x = (150 + 75 * i) * ww / SCREEN_WIDTH;
 		tmp_rect.y = textbox.y;
 		input_rect.push_back(tmp_rect);
 	}
@@ -83,7 +85,7 @@ void Login(){
 						break;
 					}
 					case SDLK_RETURN:{
-						if(!input_pic.empty())  ToNextLevel = true;
+						if(name.size())  ToNextLevel = true;
 						break;
 					}
 					case SDLK_RIGHT:{
@@ -134,9 +136,9 @@ void Login(){
 			if(name[i] >= 'a' && name[i] <= 'z')  input_pic.push_back(text[name[i] - 'a' + 13]);
 		}
 		cursor_rect.w = 2;
-		cursor_rect.h = 90;
-		cursor_rect.x = textbox.x + 75 * cursor_pos;
-		cursor_rect.y = textbox.y + (TEXTBOX_HEIGHT - cursor_rect.h) / 2;
+		cursor_rect.h = 90 * hh / SCREEN_HEIGHT;
+		cursor_rect.x = (textbox.x + 75 * cursor_pos * ww / SCREEN_WIDTH);
+		cursor_rect.y = (textbox.y + (TEXTBOX_HEIGHT * hh / SCREEN_HEIGHT - cursor_rect.h) / 2);
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, page, NULL, NULL);
 		SDL_RenderCopy(renderer, black, NULL, &textbox);
@@ -159,6 +161,8 @@ void Login(){
 }
 
 void TheEnd(){
+	int ww, hh;
+	SDL_GetWindowSize(window, &ww, &hh);
 	if(record.size() != 2)  return ;
 	tmp_surface = IMG_Load("img/end_page.png");
 	page = SDL_CreateTextureFromSurface(renderer, tmp_surface);
@@ -169,16 +173,16 @@ void TheEnd(){
 	SDL_FreeSurface(tmp_surface);
 	hint_rect[0].w = SCREEN_WIDTH;
 	hint_rect[0].h = BANNER_HEIGHT;
-	hint_rect[0].x = 0;
-	hint_rect[0].y = BANNER_HEIGHT;
+	hint_rect[0].x = 0 + (ww - SCREEN_WIDTH) / 2;
+	hint_rect[0].y = BANNER_HEIGHT + (hh - SCREEN_HEIGHT) / 2;
 	hint_rect[1].w = 400;
 	hint_rect[1].h = BANNER_HEIGHT;
-	hint_rect[1].x = 0;
-	hint_rect[1].y = BANNER_HEIGHT * 2;
+	hint_rect[1].x = 0 + (ww - SCREEN_WIDTH) / 2;
+	hint_rect[1].y = BANNER_HEIGHT * 2 + (hh - SCREEN_HEIGHT) / 2;
 	hint_rect[2].w = 400;
 	hint_rect[2].h = BANNER_HEIGHT;
-	hint_rect[2].x = 0;
-	hint_rect[2].y = BANNER_HEIGHT * 4;
+	hint_rect[2].x = 0 + (ww - SCREEN_WIDTH) / 2;
+	hint_rect[2].y = BANNER_HEIGHT * 4 + (hh - SCREEN_HEIGHT) / 2;
 	for(int i = 0; i < 2; i++){
 		end_hint[i].push_back(text[(int(record[i].first) / 60) / 10]);
 		end_hint[i].push_back(text[(int(record[i].first) / 60) % 10]);
@@ -193,11 +197,11 @@ void TheEnd(){
 		end_hint[i].push_back(text[record[i].second % 10]);
 		SDL_Rect tmp_rect;
 		tmp_rect.h = BANNER_HEIGHT;
-		if(i == 0)  tmp_rect.y = BANNER_HEIGHT * 3;
-		else  tmp_rect.y = BANNER_HEIGHT * 5;
+		if(i == 0)  tmp_rect.y = BANNER_HEIGHT * 3 + (hh - SCREEN_HEIGHT) / 2;
+		else  tmp_rect.y = BANNER_HEIGHT * 5 + (hh - SCREEN_HEIGHT) / 2;
 		for(int j = 0; j < 11; j++){
-			if(j == 0)  tmp_rect.x = 100;
-			else  if(j == 6)  tmp_rect.x = 700;
+			if(j == 0)  tmp_rect.x = 100 + (ww - SCREEN_WIDTH) / 2;
+			else  if(j == 6)  tmp_rect.x = 700 + (ww - SCREEN_WIDTH) / 2;
 			else  tmp_rect.x = tmp_rect.x + tmp_rect.w;
 			if(j == 2 || j == 5)  tmp_rect.w = 100;
 			else  if(j == 6)  tmp_rect.w = 200;

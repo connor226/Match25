@@ -1,7 +1,7 @@
 [Project]
 FileName=Match25.dev
 Name=Match25
-Type=1
+Type=0
 Ver=2
 ObjFiles=
 Includes=SDL_bgi-2.4.2\src;SDL2_image-2.0.5\x86_64-w64-mingw32\include;SDL2_mixer-2.0.4\x86_64-w64-mingw32\include;SDL2_ttf-2.0.15\x86_64-w64-mingw32\include;SDL2-2.0.12\x86_64-w64-mingw32\include;SDL2-2.0.12\x86_64-w64-mingw32\include\SDL2
